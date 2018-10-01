@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  portainer:
+    image: portainer/portainer:latest
+    hostname: portainer
+   
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer.data:/data
+    ports:
+      - "9000:9000"
+    networks:
+      mss-network:
+        aliases:
+          - portainer
+        ipv4_address: 10.10.10.100
+    labels:
+      org.label-schema.group: "management"
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
+volumes:
+  portainer.data:
+    external: true
+networks:
+  mss-network:
+    external:
+      name: mss-network
