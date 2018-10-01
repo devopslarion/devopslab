@@ -1,0 +1,128 @@
+version: '3.3'
+
+volumes:
+  elasticsearch.data.1:
+    external: true
+  elasticsearch.data.2:
+    external: true
+  elasticsearch.master.1:
+    external: true
+  elasticsearch.master.2:
+    external: true
+  elasticsearch.master.3:
+    external: true
+
+networks:
+  mss-network:
+    external:
+      name: mss-network
+
+services:
+
+  elasticsearch-master-1:
+    image: mss-elasticsearch:5.6.11
+    hostname: mss-elasticsearch-master-1
+    environment:
+      #- "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - cluster.name=mss-cluster
+      - bootstrap.memory_lock=true
+      - "node.name=mss-elasticsearch-master-1"
+      - "node.master=true"
+      - "node.data=false"
+      - "network.host=0.0.0.0"
+      - "discovery.zen.minimum_master_nodes=2"
+      - "discovery.zen.ping.unicast.hosts=[mss-elasticsearch-master-1,mss-elasticsearch-master-2,mss-elasticsearch-master-3]"
+      - "http_max_content_length=1204MB"
+    volumes:
+      - ./elasticsearch/elasticsearch-master-1.yml:/build/elasticsearch/config/elasticsearch.yml
+      - ./elasticsearch/jvm-master.options:/build/elasticsearch/config/jvm.options
+      - elasticsearch.master.1:/datavolume
+    networks:
+      mss-network:
+        aliases:
+          - mss-elasticsearch-master-1
+    labels:
+      org.label-schema.group: "reporting"
+    deploy:
+      mode: replicated
+      replicas: 1
+      endpoint_mode: dnsrr
+      resources:      
+        limits:
+          memory: 512M
+        reservations:
+          memory: 64M
+      #placement:
+      #  constraints: [ node.hostname == pc-162 ]
+
+  elasticsearch-master-2:
+    image: mss-elasticsearch:5.6.11
+    hostname: mss-elasticsearch-master-2
+    environment:
+      #- "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - cluster.name=mss-cluster
+      - bootstrap.memory_lock=true
+      - "node.name=mss-elasticsearch-master-2"
+      - "node.master=true"
+      - "node.data=false"
+      - "network.host=0.0.0.0"
+      - "discovery.zen.minimum_master_nodes=2"
+      - "discovery.zen.ping.unicast.hosts=[mss-elasticsearch-master-1,mss-elasticsearch-master-2,mss-elasticsearch-master-3]"
+      - "http_max_content_length=1204MB"
+    volumes:
+      - ./elasticsearch/elasticsearch-master-2.yml:/build/elasticsearch/config/elasticsearch.yml
+      - ./elasticsearch/jvm-master.options:/build/elasticsearch/config/jvm.options
+      - elasticsearch.master.2:/datavolume
+    networks:
+      mss-network:
+        aliases:
+          - mss-elasticsearch-master-2
+    labels:
+      org.label-schema.group: "reporting"
+    deploy:
+      mode: replicated
+      replicas: 1
+      endpoint_mode: dnsrr
+      resources:      
+        limits:
+          memory: 512M
+        reservations:
+          memory: 64M
+      #placement:
+      #  constraints: [ node.hostname == pc-162 ]
+  
+  elasticsearch-master-3:
+    image: mss-elasticsearch:5.6.11
+    hostname: mss-elasticsearch-master-3
+    environment:
+      #- "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - cluster.name=mss-cluster
+      - bootstrap.memory_lock=true
+      - "node.name=mss-elasticsearch-master-3"
+      - "node.master=true"
+      - "node.data=false"
+      - "network.host=0.0.0.0"
+      - "discovery.zen.minimum_master_nodes=2"
+      - "discovery.zen.ping.unicast.hosts=[mss-elasticsearch-master-1,mss-elasticsearch-master-2,mss-elasticsearch-master-3]"
+      - "http_max_content_length=1204MB"
+    volumes:
+      - ./elasticsearch/elasticsearch-master-3.yml:/build/elasticsearch/config/elasticsearch.yml
+      - ./elasticsearch/jvm-master.options:/build/elasticsearch/config/jvm.options
+      - elasticsearch.master.3:/datavolume
+    networks:
+      mss-network:
+        aliases:
+          - mss-elasticsearch-master-3
+    labels:
+      org.label-schema.group: "reporting"
+    deploy:
+      mode: replicated
+      replicas: 1
+      endpoint_mode: dnsrr
+      resources:      
+        limits:
+          memory: 512M
+        reservations:
+          memory: 64M
+      #placement:
+      #  constraints: [ node.hostname == pc-162 ]

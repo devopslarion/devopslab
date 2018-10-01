@@ -1,0 +1,44 @@
+FROM centos:7
+
+MAINTAINER "Justyle" <vu.nguyenvan86@gmail.com>
+
+### Update
+RUN yum -y update; yum clean all
+RUN yum -y install sudo epel-release; yum clean all
+RUN yum install -y supervisor psmisc; yum clean all
+
+### Set Time
+RUN ln -sf /usr/share/zoneinfo/Asia/Ho_Chi_Minh /etc/localtime
+
+### Install Fluentd
+RUN curl -L https://toolbelt.treasuredata.com/sh/install-redhat-td-agent3.sh | sh
+
+### Install plugins
+RUN yum install -y gcc; yum clean all
+# Elasticsearch
+RUN /usr/sbin/td-agent-gem install fluent-plugin-elasticsearch
+# Reformer
+RUN /usr/sbin/td-agent-gem install fluent-plugin-record-reformer
+# GeoIP
+RUN yum groupinstall -y "Development Tools" ; yum clean all
+RUN yum install -y geoip-devel; yum clean all
+RUN /usr/sbin/td-agent-gem install fluent-plugin-geoip
+# Slack
+RUN /usr/sbin/td-agent-gem install fluent-plugin-slack
+
+### Apply Supervisor configuration
+ADD config/fluentd-supervisor.ini /etc/supervisord.d/fluentd.ini
+ADD config/start_supervisor.sh /build/start_supervisor.sh
+RUN chmod u=rwx /build/start_supervisor.sh
+
+### WORK DIR
+WORKDIR /var/log/td-agent
+
+### DATA VOLUMES
+VOLUME ["/var/log/td-agent"]
+
+### PORTS
+EXPOSE 24224
+
+### CMD
+ENTRYPOINT ["/build/start_supervisor.sh"]

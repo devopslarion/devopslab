@@ -1,0 +1,1 @@
+docker build -f Dockerfile-fluentd -t mss/fluentd:latest .

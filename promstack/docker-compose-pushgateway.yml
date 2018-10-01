@@ -1,0 +1,39 @@
+version: '3.3'
+
+networks:
+  mss-network:
+      external:
+        name: mss-network
+
+volumes:
+    prometheus.data:
+      external: true
+    grafana.data:
+      external: true
+    alertmanager.data:
+      external: true
+	  
+services:
+  pushgateway:
+    image: prom/pushgateway:latest
+    #expose:
+    #  - 9091
+    ports:
+      - 9091:9091
+    networks:
+      default:
+        aliases:
+          - pushgateway
+    labels:
+      org.label-schema.group: "monitoring"
+    deploy:
+      mode: replicated
+      replicas: 1
+      #placement:
+      #  constraints: [node.hostname == Docker-1]
+    resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+

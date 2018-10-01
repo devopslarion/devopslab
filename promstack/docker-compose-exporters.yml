@@ -1,0 +1,65 @@
+version: '3.3'
+
+networks:
+  mss-network:
+      external:
+        name: mss-network
+
+services:
+
+  nodeexporter-58:
+    image: prom/node-exporter:v0.16.0
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    #command:
+    #  - '-collector.procfs=/host/proc'
+    #  - '-collector.sysfs=/host/sys'
+    #  - '-collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+    #expose:
+    #  - 9100
+    networks:
+      mss-network:
+        aliases:
+          - nodeexporter-58
+    labels:
+      org.label-schema.group: "monitoring"
+    deploy:
+      mode: replicated
+      replicas: 1
+    #  placement:
+    #    constraints: [node.hostname == Docker-1]
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+
+  cadvisor-58:
+    image: google/cadvisor:v0.31.0
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    #expose:
+    #  - 8080
+    networks:
+      mss-network:
+        aliases:
+          - cadvisor-58
+    labels:
+      org.label-schema.group: "monitoring"
+    deploy:
+      mode: replicated
+      replicas: 1
+    #  placement:
+    #    constraints: [node.hostname == Docker-1]
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+
+

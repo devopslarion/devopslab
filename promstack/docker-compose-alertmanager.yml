@@ -1,0 +1,46 @@
+version: '3.3'
+
+networks:
+  mss-network:
+      external:
+        name: mss-network
+
+volumes:
+    prometheus.data:
+      external: true
+    grafana.data:
+      external: true
+    alertmanager.data:
+      external: true
+
+services:
+
+  alertmanager:
+    image: prom/alertmanager:v0.15.1
+    volumes: 
+      - ./alertmanager/:/etc/alertmanager/
+      - alertmanager.data:/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/config.yml'
+      - '--storage.path=/alertmanager'
+ #   expose:
+ #     - 9093
+    ports:
+      - 9093:9093
+    networks:
+      mss-network:
+        aliases:
+          - alertmanager
+    labels:
+      org.label-schema.group: "monitoring"
+    deploy:
+      mode: replicated
+      replicas: 1
+      #placement:
+      #  constraints: [node.hostname == Docker-1]
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+

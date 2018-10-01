@@ -1,0 +1,166 @@
+version: '3'
+
+networks:
+  default:
+      external:
+        name: my-VLAN10
+
+volumes:
+    prometheus.data:
+      external: true
+    grafana.data:
+      external: true
+
+services:
+
+  prometheus:
+    image: prom/prometheus:latest
+#    container_name: prometheus
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+      - prometheus.data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention=200h'
+      - '--web.enable-lifecycle'
+ #   restart: unless-stopped
+ #   expose:
+ #     - 9090
+    ports:
+      - 9090:9090
+    networks:
+      default:
+        aliases:
+          - prometheus
+    labels:
+      org.label-schema.group: "monitoring"
+    deploy:
+      mode: replicated
+      replicas: 1
+      #placement:
+      #  constraints: [node.hostname == Docker-1]
+
+  nodeexporter-1:
+    image: prom/node-exporter:latest
+ #   container_name: nodeexporter-1
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '-collector.procfs=/host/proc'
+      - '-collector.sysfs=/host/sys'
+      - '-collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+ #   restart: unless-stopped
+ #   expose:
+ #     - 9100
+    networks:
+      default:
+        aliases:
+          - nodeexporter-1
+    labels:
+      org.label-schema.group: "monitoring"
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.hostname == Docker-1]
+
+  nodeexporter-2:
+    image: prom/node-exporter:latest
+ #   container_name: nodeexporter-2
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '-collector.procfs=/host/proc'
+      - '-collector.sysfs=/host/sys'
+      - '-collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+ #   restart: unless-stopped
+ #   expose:
+ #     - 9100
+    networks:
+      default:
+        aliases:
+          - nodeexporter-2
+    labels:
+      org.label-schema.group: "monitoring"
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.hostname == Docker-2]
+
+  cadvisor-1:
+    image: google/cadvisor:latest
+  #  container_name: cadvisor-1
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+  #  restart: unless-stopped
+  #  expose:
+  #    - 8080
+    networks:
+      default:
+        aliases:
+          - cadvisor-1
+    labels:
+      org.label-schema.group: "monitoring"
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.hostname == Docker-1]
+  
+  cadvisor-2:
+    image: google/cadvisor:latest
+  #  container_name: cadvisor-2
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+  #  restart: unless-stopped
+  #  expose:
+  #    - 8080
+    networks:
+      default:
+        aliases:
+          - cadvisor-2
+    labels:
+      org.label-schema.group: "monitoring"
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.hostname == Docker-2]
+
+  grafana:
+    image: grafana/grafana:latest
+  #  container_name: grafana
+    volumes:
+      - grafana.data:/var/lib/grafana
+    env_file:
+      - user.config
+  #  restart: unless-stopped
+  #  expose:
+  #    - 3333
+    ports:
+      - 3003:3000
+    networks:
+      default:
+        aliases:
+          - grafana
+    labels:
+      org.label-schema.group: "monitoring"
+    deploy:
+      mode: replicated
+      replicas: 1
+      #placement:
+      #  constraints: [node.hostname == Docker-1]

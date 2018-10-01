@@ -1,0 +1,48 @@
+version: '3'
+
+networks:
+  mss-network:
+      external:
+        name: mss-network
+
+volumes:
+    prometheus.data:
+      external: true
+    grafana.data:
+      external: true
+    alertmanager.data:
+      external: true
+
+services:
+  grafana:
+    image: grafana/grafana:5.2.4
+    volumes:
+      - grafana.data:/var/lib/grafana
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+    #  - ./grafana/setup.sh:/setup.sh
+    #entrypoint: /setup.sh
+    environment:
+      - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+  #  expose:
+  #    - 3000
+    ports:
+      - 3000:3000
+    networks:
+      mss-network:
+        aliases:
+          - grafana
+    labels:
+      org.label-schema.group: "monitoring"
+    deploy:
+      mode: replicated
+      replicas: 1
+      #placement:
+      #  constraints: [node.hostname == Docker-1]
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M

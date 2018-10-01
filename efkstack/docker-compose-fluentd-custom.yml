@@ -1,0 +1,68 @@
+version: '3.3'
+
+volumes:
+  fluentd.data.1:
+    external: true
+  fluentd.data.2:
+    external: true
+networks:
+  mss-network:
+    external:
+      name: mss-network
+
+services:
+
+  fluentd-1:
+    image: mss-fluentd:1.2.2
+    hostname: mss-fluentd-1
+    volumes:
+      - ./fluentd/td-agent.conf:/etc/td-agent/td-agent.conf
+      - fluentd.data.1:/var/log/td-agent
+    ports:
+      - "24225:24224/tcp"
+      - "24225:24224/udp"
+    networks:
+      mss-network:
+        aliases:
+          - mss-fluentd-1
+    labels:
+      org.label-schema.group: "reporting"
+    deploy:
+      mode: replicated
+      replicas: 1
+    #  placement:
+    #    constraints: [node.hostname == pc-162]
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 32M
+
+
+  fluentd-2:
+    image: mss-fluentd:1.2.2
+    hostname: mss-fluentd-2
+    volumes:
+      - ./fluentd/td-agent.conf:/etc/td-agent/td-agent.conf
+      - fluentd.data.2:/var/log/td-agent
+    ports:
+      - "24226:24224/tcp"
+      - "24226:24224/udp"
+    networks:
+      mss-network:
+        aliases:
+          - mss-fluentd-2
+    labels:
+      org.label-schema.group: "reporting"
+    deploy:
+      mode: replicated
+      replicas: 1
+    #  placement:
+    #    constraints: [node.hostname == pc-162]
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 32M
+
+
