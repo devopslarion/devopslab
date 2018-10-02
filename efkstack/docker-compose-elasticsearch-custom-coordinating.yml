@@ -33,11 +33,13 @@ services:
     volumes:
       - ./elasticsearch/elasticsearch-coordinating.yml:/build/elasticsearch/config/elasticsearch.yml
       - ./elasticsearch/jvm-coordinating.options:/build/elasticsearch/config/jvm.options
+    #ports:
+    #  - target: 9200
+    #    published: 9200
+    #    protocol: tcp
+    #    mode: host
     ports:
-      - target: 9200
-        published: 9200
-        protocol: tcp
-        mode: host
+      - 9200:9200
     networks:
       mss-network:
         aliases:
