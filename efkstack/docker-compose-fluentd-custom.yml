@@ -13,11 +13,14 @@ networks:
 services:
 
   fluentd-1:
-    image: mss-fluentd:1.2.2
+    image: devopslarion/fluentd:1.2.2
     hostname: mss-fluentd-1
-    volumes:
-      - ./fluentd/td-agent.conf:/etc/td-agent/td-agent.conf
-      - fluentd.data.1:/var/log/td-agent
+    configs:
+      - source: reporting_fluentd_config
+        target: /etc/td-agent/td-agent.conf
+    #volumes:
+      #- ./fluentd/td-agent.conf:/etc/td-agent/td-agent.conf
+      #- fluentd.data.1:/var/log/td-agent
     ports:
       - "24225:24224/tcp"
       - "24225:24224/udp"
@@ -40,11 +43,14 @@ services:
 
 
   fluentd-2:
-    image: mss-fluentd:1.2.2
+    image: devopslarion/fluentd:1.2.2
     hostname: mss-fluentd-2
-    volumes:
-      - ./fluentd/td-agent.conf:/etc/td-agent/td-agent.conf
-      - fluentd.data.2:/var/log/td-agent
+    configs:
+      - source: reporting_fluentd_config
+        target: /etc/td-agent/td-agent.conf
+    #volumes:
+    #  - ./fluentd/td-agent.conf:/etc/td-agent/td-agent.conf
+    #  - fluentd.data.2:/var/log/td-agent
     ports:
       - "24226:24224/tcp"
       - "24226:24224/udp"
