@@ -47,7 +47,8 @@ services:
     labels:
       org.label-schema.group: "reporting"
     deploy:
-      mode: global
+      mode: replicated
+      replicas: 2
       endpoint_mode: dnsrr
       resources:      
         limits:
