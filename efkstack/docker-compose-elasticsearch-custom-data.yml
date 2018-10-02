@@ -17,7 +17,7 @@ networks:
 services:
 
   elasticsearch-data-1:
-    image: mss-elasticsearch:5.6.11
+    image: devopslarion/elasticsearch:5.6.11
     hostname: mss-elasticsearch-data-1
     environment:
       #- "ES_JAVA_OPTS=-Xms512m -Xmx512m"
@@ -32,7 +32,7 @@ services:
     volumes:
       - ./elasticsearch/elasticsearch-data-1.yml:/build/elasticsearch/config/elasticsearch.yml
       - ./elasticsearch/jvm-data.options:/build/elasticsearch/config/jvm.options
-      - elasticsearch.data.1:/datavolume
+#      - elasticsearch.data.1:/datavolume
     networks:
       mss-network:
         aliases:
@@ -52,7 +52,7 @@ services:
       #  constraints: [ node.hostname == pc-162 ]
   
   elasticsearch-data-2:
-    image: mss-elasticsearch:5.6.11
+    image: devopslarion/elasticsearch:5.6.11
     hostname: mss-elasticsearch-data-2
     environment:
       #- "ES_JAVA_OPTS=-Xms512m -Xmx512m"
@@ -67,7 +67,7 @@ services:
     volumes:
       - ./elasticsearch/elasticsearch-data-2.yml:/build/elasticsearch/config/elasticsearch.yml
       - ./elasticsearch/jvm-data.options:/build/elasticsearch/config/jvm.options
-      - elasticsearch.data.2:/datavolume
+#      - elasticsearch.data.2:/datavolume
     networks:
       mss-network:
         aliases:

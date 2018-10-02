@@ -20,7 +20,7 @@ networks:
 services:
 
   elasticsearch-master-1:
-    image: mss-elasticsearch:5.6.11
+    image: devopslarion/elasticsearch:5.6.11
     hostname: mss-elasticsearch-master-1
     environment:
       #- "ES_JAVA_OPTS=-Xms512m -Xmx512m"
@@ -36,7 +36,7 @@ services:
     volumes:
       - ./elasticsearch/elasticsearch-master-1.yml:/build/elasticsearch/config/elasticsearch.yml
       - ./elasticsearch/jvm-master.options:/build/elasticsearch/config/jvm.options
-      - elasticsearch.master.1:/datavolume
+#      - elasticsearch.master.1:/datavolume
     networks:
       mss-network:
         aliases:
@@ -56,7 +56,7 @@ services:
       #  constraints: [ node.hostname == pc-162 ]
 
   elasticsearch-master-2:
-    image: mss-elasticsearch:5.6.11
+    image: devopslarion/elasticsearch:5.6.11
     hostname: mss-elasticsearch-master-2
     environment:
       #- "ES_JAVA_OPTS=-Xms512m -Xmx512m"
@@ -72,7 +72,7 @@ services:
     volumes:
       - ./elasticsearch/elasticsearch-master-2.yml:/build/elasticsearch/config/elasticsearch.yml
       - ./elasticsearch/jvm-master.options:/build/elasticsearch/config/jvm.options
-      - elasticsearch.master.2:/datavolume
+#      - elasticsearch.master.2:/datavolume
     networks:
       mss-network:
         aliases:
@@ -92,7 +92,7 @@ services:
       #  constraints: [ node.hostname == pc-162 ]
   
   elasticsearch-master-3:
-    image: mss-elasticsearch:5.6.11
+    image: devopslarion/elasticsearch:5.6.11
     hostname: mss-elasticsearch-master-3
     environment:
       #- "ES_JAVA_OPTS=-Xms512m -Xmx512m"
@@ -108,7 +108,7 @@ services:
     volumes:
       - ./elasticsearch/elasticsearch-master-3.yml:/build/elasticsearch/config/elasticsearch.yml
       - ./elasticsearch/jvm-master.options:/build/elasticsearch/config/jvm.options
-      - elasticsearch.master.3:/datavolume
+#      - elasticsearch.master.3:/datavolume
     networks:
       mss-network:
         aliases:
