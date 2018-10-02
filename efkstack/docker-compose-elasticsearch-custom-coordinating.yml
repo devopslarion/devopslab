@@ -57,7 +57,7 @@ services:
           memory: 128M
       #placement:
       #  constraints: [ node.hostname == pc-162 ]
-    healthcheck:
-      test: wget -qO- http://localhost:9200 > /dev/null
-      interval: 30s
-      retries: 3
+    #healthcheck:
+    #  test: wget -qO- http://localhost:9200 > /dev/null
+    #  interval: 30s
+    #  retries: 3
